@@ -1,9 +1,8 @@
 var express = require('express')
 var bodyParser = require('body-parser')
-var userCtrl = require('./controllers/user-ctrl')
-
 require('./db')
 require('./passport')
+var userCtrl = require('./controllers/user-ctrl')
 
 var app = express()
 var port = process.env.PORT || 3000
