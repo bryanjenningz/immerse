@@ -1,0 +1,16 @@
+{
+  "name": "immerse",
+  "version": "1.0.0",
+  "description": "The most fun way to learn languages",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Bryan Jennings",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
