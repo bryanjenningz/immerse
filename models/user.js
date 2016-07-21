@@ -1,4 +1,6 @@
 var mongoose = require('mongoose')
+var bcrypt = require('bcryptjs')
+var saltRounds = 5
 
 var userSchema = new mongoose.Schema({
   name: {type: String, required: true},
@@ -15,4 +17,21 @@ var userSchema = new mongoose.Schema({
   about: String
 })
 
+userSchema.methods.isValidPassword = isValidPassword
+userSchema.methods.setPassword = setPassword
+
 mongoose.model('User', userSchema)
+
+function isValidPassword(password, salt) {
+  var user = this
+  return bcrypt.compareSync(password, user.hash)
+}
+
+function setPassword(password) {
+  var user = this
+  var salt = bcrypt.genSaltSync(saltRounds)
+  var hash = bcrypt.hashSync(password, salt)
+
+  // We don't need to store the salt because the salt is stored in the hash.
+  user.hash = hash
+}
