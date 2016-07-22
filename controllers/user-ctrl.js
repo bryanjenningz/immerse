@@ -1,9 +1,6 @@
 var mongoose = require('mongoose')
 var User = mongoose.model('User')
-
-// var fs = require('fs')
-// var users = JSON.parse(fs.readFileSync(__dirname + '/../MOCK_DATA.json').toString())
-// var nextUserId = users.length + 1
+var {hashPassword} = require('./user-password-functions')
 
 var userCtrl = {
   getUsers,
@@ -23,6 +20,7 @@ function sendJSON(res, status, json) {
 function getUsers(req, res) {
   User
   .find({})
+  .limit(20)
   .exec(function(err, users) {
     if (err) {
       sendJSON(res, 404, {message: err})
@@ -39,11 +37,11 @@ function getUsers(req, res) {
 function newUser(req, res) {
   var {name, email, password, speaks, learning} = req.body
 
-  if (!name || !email || !password || !speaks || !learning) {
+  if (!name || !email || !password) {
     sendJSON(res, 400, {message: 'Please fill in all fields.'})
   } else {
     User
-    .create({name, email, password, speaks, learning}, function(err, user) {
+    .create({name, email, password: hashPassword(password)}, function(err, user) {
       if (err) {
         sendJSON(res, 404, {message: err})
       } else {
@@ -78,7 +76,7 @@ function getUser(req, res) {
 
 function updateUser(req, res) {
   var {userId} = req.params
-  var {name, email, password, speaks, learning} = req.body
+  var {name, email, password} = req.body
   if (!isValidUserId(userId)) {
     sendJSON(res, 400, {message: 'Put in a valid user ID (a hexadecimal number).'})
   } else {
@@ -92,9 +90,7 @@ function updateUser(req, res) {
       } else {
         user.name = name || user.name
         user.email = email || user.email
-        user.password = password || user.password
-        user.speaks = speaks || user.speaks
-        user.learning = learning || user.learning
+        user.password = password ? hashPassword(password) : user.password
         user.save(function(err, user) {
           if (err) {
             sendJSON(res, 404, {message: err})

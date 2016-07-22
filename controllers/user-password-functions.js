@@ -1,15 +1,11 @@
-var mongoose = require('mongoose')
+var jwt = require('jsonwebtoken')
+var bcrypt = require('bcryptjs')
 
-var dbURI = process.env.NODE_ENV === 'production' ?
-            process.env.MONGOLAB_URI :
-            'mongodb://localhost/immerse'
-
-mongoose.connect(dbURI)
-
-mongoose.connection.on('connected', () => console.log(`Mongoose connected to ${dbURI}`))
-mongoose.connection.on('error', err => console.log(`Mongoose connection error: ${err}`))
-
-require('./models/user')
+module.exports = {
+  isCorrectPassword,
+  hashPassword,
+  generateJwt
+}
 
 function isCorrectPassword(password, hashedPassword) {
   return bcrypt.compareSync(password, hashedPassword)
@@ -33,4 +29,3 @@ function generateJwt(user) {
     expiration: parseInt(expiration.getTime() / 1000)
   }, process.env.JWT_SECRET)
 }
-
